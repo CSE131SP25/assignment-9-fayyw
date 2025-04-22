@@ -9,14 +9,19 @@ public class Snake {
 	private LinkedList<BodySegment> segments;
 	private double deltaX;
 	private double deltaY;
+	private int currentDirection; 
 	
 	public Snake() {
-		//FIXME - set up the segments instance variable
-		deltaX = 0;
-		deltaY = 0;
+		BodySegment next = new BodySegment(0.5, 0.5, SEGMENT_SIZE); 
+		this.segments = new LinkedList<BodySegment>();
+		segments.add(next);
+		deltaX = 0.0;
+		deltaY = 0.0;
 	}
 	
 	public void changeDirection(int direction) {
+	
+		
 		if(direction == 1) { //up
 			deltaY = MOVEMENT_SIZE;
 			deltaX = 0;
@@ -37,14 +42,26 @@ public class Snake {
 	 * based on the current direction of travel
 	 */
 	public void move() {
-		//FIXME
+		double newX = segments.get(0).getX() + deltaX;
+        double newY = segments.get(0).getY() + deltaY;
+
+        BodySegment newHead = new BodySegment(newX, newY, SEGMENT_SIZE);
+        segments.addFirst(newHead);
+        
+        segments.removeLast();
+        
+  
+		
 	}
 	
 	/**
 	 * Draws the snake by drawing each segment
 	 */
 	public void draw() {
-		//FIXME
+		for(int i = 0; i < segments.size(); i++) {
+			BodySegment draw = segments.get(i);
+			draw.draw();
+		}
 	}
 	
 	/**
@@ -53,8 +70,15 @@ public class Snake {
 	 * @return true if the snake successfully ate the food
 	 */
 	public boolean eatFood(Food f) {
-		//FIXME
-		return false;
+		BodySegment head = segments.get(0);
+		double dist = Math.sqrt(Math.pow(head.getX() - f.getX(), 2) + Math.pow(head.getY() - f.getY(), 2));
+
+        if (dist < SEGMENT_SIZE + Food.FOOD_SIZE) {
+            BodySegment newSeg = new BodySegment(head.getX(), head.getY(), SEGMENT_SIZE);
+            segments.addFirst(newSeg);
+            return true;
+        }
+        return false;
 	}
 	
 	/**
@@ -62,7 +86,9 @@ public class Snake {
 	 * @return whether or not the head is in the bounds of the window
 	 */
 	public boolean isInbounds() {
-		//FIXME
-		return true;
+		if ((segments.get(0).getX() < 1 && segments.get(0).getX() > 0) && (segments.get(0).getY() < 1 && segments.get(0).getY() > 0)) {
+			return true; 
+		}
+		return false;
 	}
 }
